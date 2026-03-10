@@ -1,0 +1,1 @@
+Different topics related to Artificial Intelligence, e.g. statistical models (KNN), machine learning (CNN) or machine reasoning (first order logic, graph inference etc.) and their combinations
