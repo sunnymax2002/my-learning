@@ -1,1 +1,1 @@
-Async ACT
+Yale University [Asynchronous VLSI](https://avlsi.csl.yale.edu/act/doku.php?id=start)
