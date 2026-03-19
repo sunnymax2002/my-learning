@@ -1,5 +1,12 @@
 BlueSpec Verilog
 
+# Compile
+
+```csh
+mkdir -p build/verilog
+bsc -verilog -g <top module name> -bdir <build dir> -vdir <output verilog dir> <input BSV file>
+```
+
 # References
 
 1. [Useful documentation for getting started](https://github.com/kcamenzind/BluespecIntroGuide/tree/master)
