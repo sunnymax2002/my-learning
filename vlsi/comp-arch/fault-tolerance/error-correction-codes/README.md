@@ -64,9 +64,13 @@ For storage ECC, all 0's and all 1's have a [special significance](https://opent
 
 2. Since Flash doesn't support a single word erase, a common method used is to clear all the bits (including parity bits), so that the stored data is cleared. But such a resulting code word must also be valid, i.e., when all data bits are 0, the parity bits must also all be 0.
 
-It is simple to see that from above equations to calculate parity bits, ensuring all 0's conditions is automatically obtained. Further, since for each parity bit P0 to P3, an odd number of data bits are combined, if all data bits are 1, the (even parity) calculation also ensures that all of the parity bits are also 1. Finally, in this specific case, since block size is even, there are odd number of bits, other than Pf, and which implies that Pf will also be 1 (if all other bits are 1)
+It is simple to see that from above equations to calculate parity bits, ensuring all 0's conditions is automatically obtained. 
 
-We'll try to generalize this in the next section
+Further, since for each parity bit P0 to P3, an odd number of data bits are combined, if all data bits are 1, the (even parity) calculation also ensures that all of the parity bits are also 1. Finally, in this specific case, since block size is even, there are odd number of bits, other than Pf, and which implies that Pf will also be 1 (if all other bits are 1)
+
+To generalize that all 1's is a valid codeword:
+
+1. The parity check matrix H must have even number of 1's in every row, so that matrix multiplication with received vector R (all 1's) is zero for every row of H
 
 ## Number of Parity Bits Needed
 
@@ -79,6 +83,8 @@ This is because
 1. m parity bits can be used to create 2^m subsets of the block
 
 2. The block length is (k + m + 1) for extended hamming code (k data bits, m parity bits for subsets and 1 overall parity bit)
+
+> In this context, let us define n = k + m, even though the overall parity bit is added so that the overall block size is n + 1
 
 3. To identify exactly which bit got flipped, the number of subsets must be at least equal to the block size
 
@@ -98,6 +104,8 @@ Here's the table for some common data widths:
 
 What are [Generator Matrices](https://www.youtube.com/watch?v=siMKiIFSmV0) in the context of ECC?
 
+https://www.emergentmind.com/topics/ecc-secded
+
 ![](assets/hamming_matrix.png)
 
 The generator matrix G can be used to determine the parity bits for a given data codeword (vector)
@@ -106,9 +114,9 @@ Message Vector M = (m1, m2, m3, ..., mk) of size 1 x k
 
 Check bits (or parity) Vector C = (c1, c2, c3, ..., cm) of size 1 x m (in this video, they use g in place of m)
 
-Overall Code Vector is concatenation of M and C, X = (M | C) of size 1 x (k + m). Note that here, we're not considering the overall parity bit
+Overall Code Vector is concatenation of M and C, X = (M | C) of size 1 x n. Note that here, we're not considering the overall parity bit
 
-X can be derived using, X = MG (matrix multiplication), where G is the generator matrix defined as:
+X can be derived using, X = MG (matrix multiplication), where G is the generator matrix (of size k x n) defined as:
 
 G = [Ik | P], where Ik is the k x k identity matrix, and P is the parity matrix of size k x m
 
@@ -141,3 +149,31 @@ The table below shows the Parity matrix for Hamming Code (11,4) as explained in 
 | 8 | 13
 | 9 | 14
 | 10 | 15
+
+### Parity-Check Matrix
+
+> This section is currently WIP
+
+H = [P' | Im] is of size (m x n)
+
+where P' (size m x k) is transpose of P, and Im is identity matrix of size (m x m)
+
+The decoding process constitutes
+
+S = HR'
+
+where
+
+ * R' (size n x 1) is the transpose of received message vector R, and
+
+ * S is the syndrome vector, which tells which parity bit detected the error
+
+Each row of H is effectively the concatenation of **column of P** and **identify matrix**, so each element of S is vector multiplication, which is effectively selecting a subset of received vector R according to parity bit definition (essentially the same operation as used to generate parity bits)
+
+1. If S = 0, no error is present, i.e., R = M
+
+2. If S matches a column i of H, the ith bit in R has the error and can be corrected (by flipping)
+
+OPEN: Understand why above and below
+
+3. If S = hi ^ hj for 2 columns i and j in H, then a double bit error is detected
